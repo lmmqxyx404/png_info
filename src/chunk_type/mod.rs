@@ -1,9 +1,29 @@
 use crate::Error;
 use std::{fmt::Display, str::FromStr};
 
+/// [introduction](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html#Chunk-naming-conventions)
 #[derive(Debug, PartialEq, Eq)]
 pub struct ChunkType {
     bytes: [u8; 4],
+}
+
+#[derive(Debug)]
+pub enum ChunkTypeError {
+    InvalidLength,
+    invalidByte(u8),
+}
+
+impl Display for ChunkTypeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ChunkTypeError::InvalidLength => {
+                write!(f, "Chunk types must be 4 bytes long!")
+            }
+            ChunkTypeError::invalidByte(b) => {
+                write!(f, "invalid bit: {}", b)
+            }
+        }
+    }
 }
 
 impl ChunkType {
@@ -12,32 +32,39 @@ impl ChunkType {
     }
 
     fn is_critical(&self) -> bool {
-        false
+        (self.bytes[0] & 0x20) != 0x20
     }
     fn is_public(&self) -> bool {
-        false
+        (self.bytes[1] & 0x20) != 0x20
     }
-    fn is_err(&self) -> bool {
-        false
-    }
+
     fn is_reserved_bit_valid(&self) -> bool {
-        false
+        (self.bytes[2] & 0x20) != 0x20
     }
     fn is_safe_to_copy(&self) -> bool {
-        false
+        (self.bytes[3] & 0x20) == 0x20
     }
     fn is_valid(&self) -> bool {
-        false
+        for i in self.bytes.as_ref().iter() {
+            if !((*i >= 'a' as u8 && *i <= 'z' as u8) || (*i >= 'A' as u8 && *i <= 'Z' as u8)) {
+                return false;
+            }
+        }
+        if self.bytes[2] >= 'A' as u8 && self.bytes[2] <= 'Z' as u8 {
+            true
+        } else {
+            false
+        }
     }
 }
 
 impl TryFrom<[u8; 4]> for ChunkType {
     // type Error;
-    type Error = &'static str;
+    type Error = ChunkTypeError;
     fn try_from(value: [u8; 4]) -> Result<Self, Self::Error> {
         for i in value {
             if !((i >= 'a' as u8 && i <= 'z' as u8) || (i >= 'A' as u8 && i <= 'Z' as u8)) {
-                return Err("invalid char");
+                return Err(ChunkTypeError::invalidByte(i));
             }
         }
         Ok(ChunkType { bytes: value })
@@ -45,10 +72,10 @@ impl TryFrom<[u8; 4]> for ChunkType {
 }
 
 impl FromStr for ChunkType {
-    type Err = &'static str;
+    type Err = ChunkTypeError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.len() != 4 {
-            return Err("length is invalid");
+            return Err(ChunkTypeError::InvalidLength);
         }
 
         let v = s
@@ -57,21 +84,21 @@ impl FromStr for ChunkType {
             .iter()
             .map(|x| *x as u8)
             .collect::<Vec<u8>>();
-        Ok(ChunkType {
+        let bytes = [v[0], v[1], v[2], v[3]];
+        ChunkType::try_from(bytes)
+        /* Ok(ChunkType {
             bytes: [v[0], v[1], v[2], v[3]],
-        })
+        }) */
     }
 }
 
-/* impl ToString for ChunkType {
-    fn to_string(&self) -> String {
-        String::from("cest")
-    }
-} */
-
 impl Display for ChunkType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        return Ok(());
+        write!(
+            f,
+            "{}",
+            String::from(std::str::from_utf8(&self.bytes).unwrap())
+        )
     }
 }
 #[cfg(test)]
@@ -155,6 +182,7 @@ mod tests {
         assert!(!chunk.is_valid());
 
         let chunk = ChunkType::from_str("Ru1t");
+        // is_err() likes is_some()
         assert!(chunk.is_err());
     }
 
