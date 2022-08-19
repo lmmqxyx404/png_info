@@ -2,5 +2,6 @@
 use  png  to store  info
 
 # modules
-png
-chunk_type
+## png
+
+## chunk_type
