@@ -1,3 +1,5 @@
+/// pay attention to the crc crate.
+/// it has been changed a lot.
 use crc::{Algorithm, Crc, CRC_32_ISO_HDLC};
 
 use crate::{
@@ -5,7 +7,9 @@ use crate::{
     Error,
 };
 
-use std::fmt;
+use std::fmt::{self};
+
+#[derive(Debug)]
 pub struct Chunk {
     length: u32,
     chunk_type: ChunkType,
@@ -14,7 +18,7 @@ pub struct Chunk {
 }
 
 impl Chunk {
-    fn new(chunk_type: ChunkType, chunk_data: Vec<u8>) -> Chunk {
+    pub fn new(chunk_type: ChunkType, chunk_data: Vec<u8>) -> Chunk {
         let calc_hash = [&chunk_type.bytes(), chunk_data.as_slice()].concat();
         let CASTAGNOLI: Crc<u32> = Crc::<u32>::new(&CRC_32_ISO_HDLC);
         let crc_res = CASTAGNOLI.checksum(&calc_hash);
@@ -34,7 +38,7 @@ impl Chunk {
         &self.chunk_data
     }
 
-    fn chunk_type(&self) -> &ChunkType {
+    pub fn chunk_type(&self) -> &ChunkType {
         &self.chunk_type
     }
 
@@ -44,6 +48,17 @@ impl Chunk {
 
     pub fn data_as_string(&self) -> Result<String, Error> {
         Ok(String::from_utf8(self.chunk_data.clone())?)
+    }
+
+    /// add a function for png module
+    pub fn as_bytes(&self) -> Vec<u8> {
+        [
+            self.length.to_be_bytes().as_ref(),
+            self.chunk_type.bytes().as_ref(),
+            self.chunk_data.as_slice(),
+            self.crc.to_be_bytes().as_ref(),
+        ]
+        .concat()
     }
 }
 

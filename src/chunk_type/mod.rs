@@ -1,4 +1,3 @@
-use crate::Error;
 use std::{fmt::Display, str::FromStr};
 
 /// [introduction](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html#Chunk-naming-conventions)
