@@ -7,6 +7,7 @@ use std::{
 use crate::{args::*, chunk::Chunk, chunk_type::ChunkType, png::Png, Error, Result};
 use std::fs::OpenOptions;
 
+/// get the png struct by the path of the input.
 fn take_png<T: AsRef<Path>>(input: T) -> Result<Png> {
     let mut file_buffer = OpenOptions::new()
         .write(true)
