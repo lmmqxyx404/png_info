@@ -12,6 +12,8 @@ pub enum Commands {
 #[derive(Debug, StructOpt)]
 
 pub struct Opt {
+    /// file path
+    #[structopt(parse(from_os_str), name = "FilePath")]
     pub input: PathBuf,
     /// must indicate the macro because
     #[structopt(subcommand)]
@@ -35,4 +37,3 @@ pub struct RemoveArgs {
 
 #[derive(Debug, StructOpt)]
 pub struct PrintArgs {}
-

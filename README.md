@@ -5,11 +5,14 @@ read the [article](https://picklenerd.github.io/pngme_book/hints/chapter_4_hints
 use  png  to store  info
 
 # modules
+## png
+a png files is consisted by a fixed FILE_HEAD and a series of chunks
 ## chunk_type
 validate basic chunk types
 
 ## chunk
 
-## png
+
+
 
 ## args
