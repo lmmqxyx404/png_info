@@ -3,13 +3,13 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub enum Commands {
-    /// hide the message to the specific chunk
+    /// Hide the message to the specific chunk
     Encode(EncodeArgs),
-    /// decode the info from specific chunk
+    /// Decode the info from specific chunk
     Decode(DecodeArgs),
-    /// delete the info from the chunk
+    /// Delete the info from the chunk
     Remove(RemoveArgs),
-    ///  print the chunk info from the file
+    /// Print the chunk info from the file
     Print(PrintArgs),
 }
 
