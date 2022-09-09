@@ -1,7 +1,6 @@
-use std::path::PathBuf;
 use structopt::StructOpt;
 
-use png_info::args::{Commands::*, EncodeArgs, Opt};
+use png_info::args::{Commands::*, Opt};
 use png_info::commands::*;
 use png_info::Result;
 

@@ -16,7 +16,9 @@ fn take_png<T: AsRef<Path>>(input: T) -> Result<Png> {
         .unwrap();
     let mut buffer = Vec::with_capacity(1000000);
     file_buffer.read_to_end(&mut buffer);
-    Ok(buffer.as_slice().try_into().unwrap())
+    // The following two lines equal
+    // Ok(buffer.as_slice().try_into().unwrap())
+    Ok(Png::try_from(buffer.as_slice()).unwrap())
 }
 
 pub fn encode<T: AsRef<Path>>(input: T, args: EncodeArgs) -> Result<()> {
@@ -56,12 +58,15 @@ pub fn print(input: &Path) -> Result<()> {
     let mut png_item = take_png(&input).unwrap();
 
     println!(
-        "File: {},Size: {}",
+        "File: {}, Size: {}KB",
         input.display(),
-        png_item.as_bytes().len()
+        png_item.as_bytes().len() / 1024
     );
 
     for (i, chunk) in png_item.chunks().iter().enumerate() {
+        if i > 10 {
+            return Ok(());
+        }
         println!("{} {}", i, chunk);
     }
 
