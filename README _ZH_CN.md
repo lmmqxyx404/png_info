@@ -10,7 +10,7 @@ structopt：处理命令行参数
 ## png
 png 文件由固定文件头和一系列的 chunk 数据共同组成。可以用16进制编辑器打开
 ## chunk_type
-根据公开的png文件标准，创建合格的chunk_type。
+根据公开的png文件标准，创建符合要求的chunk_type。
 
 ## chunk
 创建不同的chunk
@@ -18,4 +18,7 @@ png 文件由固定文件头和一系列的 chunk 数据共同组成。可以用
 
 
 ## args
-创建不同的指令
+使用enum创建不同的指令
+
+## commands
+具体的指令功能实现
