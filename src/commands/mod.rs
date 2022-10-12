@@ -32,6 +32,7 @@ pub fn encode<T: AsRef<Path>>(input: T, args: EncodeArgs) -> Result<()> {
     Ok(())
 }
 
+/// decode the info
 pub fn decode<T: AsRef<Path>>(input: T, args: DecodeArgs) -> Result<()> {
     let mut png_item = take_png(&input).unwrap();
     if let Some(target_chunk) = png_item.chunk_by_type(&args.chunk_type) {
@@ -45,6 +46,8 @@ pub fn decode<T: AsRef<Path>>(input: T, args: DecodeArgs) -> Result<()> {
     }
     Ok(())
 }
+
+/// remove the specific chunk
 pub fn remove<T: AsRef<Path>>(input: T, args: RemoveArgs) -> Result<()> {
     let mut png_item = take_png(&input).unwrap();
 
@@ -54,6 +57,7 @@ pub fn remove<T: AsRef<Path>>(input: T, args: RemoveArgs) -> Result<()> {
     Ok(())
 }
 
+/// print the relative infomation
 pub fn print(input: &Path) -> Result<()> {
     let mut png_item = take_png(&input).unwrap();
 
